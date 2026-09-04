@@ -1,0 +1,22 @@
+[Unit]
+Description=Jazz Command music scheduler
+After=pipewire.service wireplumber.service
+Wants=pipewire.service wireplumber.service
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/tune-table-command-center
+ExecStart=/path/to/node /path/to/tune-table-command-center/server.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=5
+KillMode=control-group
+SendSIGKILL=yes
+Environment=JAZZ_HOST=0.0.0.0
+Environment=JAZZ_PORT=8787
+Environment=JAZZ_SPEAKER=AA:BB:CC:DD:EE:FF
+Environment="JAZZ_SPEAKER_NAME=Tune Table"
+Environment=JAZZ_AUDIO_DEVICE=pipewire/bluez_output.AA_BB_CC_DD_EE_FF.1
+
+[Install]
+WantedBy=default.target
