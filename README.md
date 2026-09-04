@@ -162,6 +162,16 @@ systemctl --user restart jazz-command.service
 
 The service binds to `0.0.0.0:8787`, which makes it reachable through every network interface on the laptop. systemd user lingering is enabled for `meshan`, so the service can run without an open desktop session.
 
+### Allow phones through UFW
+
+Listening on `0.0.0.0` does not bypass the firewall. If UFW is active, allow port `8787` from the home subnet. Replace the subnet below if your network does not use `10.0.0.x` addresses.
+
+```bash
+sudo ufw allow from 10.0.0.0/24 to any port 8787 proto tcp
+```
+
+This rule accepts Jazz Command connections from the local `10.0.0.x` network. It does not open the port to the wider internet.
+
 ## Troubleshooting
 
 ### The page does not open
