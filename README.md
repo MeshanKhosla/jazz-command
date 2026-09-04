@@ -2,6 +2,8 @@
 
 Jazz Command is a small web controller for a Bluetooth speaker attached to a Linux home server. Open the dashboard to play music, change the volume, check the speaker connection, and set weekly play times.
 
+![Jazz Command dashboard](docs/jazz-command-dashboard.png)
+
 The app runs on port `8787`. Open `http://<server-ip>:8787` from another device on the home network.
 
 ## What it does
