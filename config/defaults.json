@@ -1,0 +1,23 @@
+{
+  "volume": 45,
+  "sources": [
+    {
+      "id": "radio-swiss-jazz",
+      "title": "Radio Swiss Jazz",
+      "artist": "Live radio · jazz, soul & blues",
+      "kind": "radio",
+      "source": "https://stream.srg-ssr.ch/m/rsj/mp3_128"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "weekday-morning-jazz",
+      "name": "Weekday Morning Jazz",
+      "sourceId": "radio-swiss-jazz",
+      "time": "08:00",
+      "days": ["mon", "tue", "wed", "thu", "fri"],
+      "enabled": true,
+      "lastRun": null
+    }
+  ]
+}

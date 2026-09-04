@@ -13,32 +13,16 @@ const ROOT = __dirname;
 const STATIC_DIR = path.join(ROOT, 'dist');
 const DATA_DIR = path.join(ROOT, 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
-const MUSIC_DIR = path.join(process.env.HOME || os.homedir(), 'Music');
+const DEFAULTS_FILE = path.join(ROOT, 'config', 'defaults.json');
+const REPO_MUSIC_DIR = path.join(ROOT, 'music');
+const USER_MUSIC_DIR = path.join(process.env.HOME || os.homedir(), 'Music');
 const SPEAKER = process.env.JAZZ_SPEAKER || '';
 const SPEAKER_NAME = process.env.JAZZ_SPEAKER_NAME || 'Bluetooth speaker';
 const SPEAKER_AUDIO = process.env.JAZZ_AUDIO_DEVICE || `pipewire/bluez_output.${SPEAKER.replaceAll(':', '_')}.1`;
 const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
-const radio = {
-  id: 'radio-swiss-jazz',
-  title: 'Radio Swiss Jazz',
-  artist: 'Live radio · jazz, soul & blues',
-  kind: 'radio',
-  source: 'https://stream.srg-ssr.ch/m/rsj/mp3_128'
-};
-
-const defaults = {
-  volume: 45,
-  schedules: [{
-    id: 'weekday-morning-jazz',
-    name: 'Weekday Morning Jazz',
-    sourceId: radio.id,
-    time: '08:00',
-    days: ['mon', 'tue', 'wed', 'thu', 'fri'],
-    enabled: true,
-    lastRun: null
-  }]
-};
+const seed = JSON.parse(fs.readFileSync(DEFAULTS_FILE, 'utf8'));
+const defaults = { volume: seed.volume, schedules: seed.schedules };
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(CONFIG_FILE)) {
@@ -79,17 +63,17 @@ async function speakerStatus() {
   };
 }
 
-function walkMusic(dir, out = []) {
+function walkMusic(dir, label, out = [], root = dir) {
   if (!fs.existsSync(dir)) return out;
   for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
     if (item.name.startsWith('.')) continue;
     const full = path.join(dir, item.name);
-    if (item.isDirectory()) walkMusic(full, out);
+    if (item.isDirectory()) walkMusic(full, label, out, root);
     else if (/\.(mp3|flac|m4a|ogg|opus|wav)$/i.test(item.name)) {
       out.push({
         id: `file:${full}`,
         title: path.basename(item.name, path.extname(item.name)),
-        artist: path.relative(MUSIC_DIR, path.dirname(full)) || 'Local music',
+        artist: path.relative(root, path.dirname(full)) || label,
         kind: 'file',
         source: full
       });
@@ -99,7 +83,11 @@ function walkMusic(dir, out = []) {
 }
 
 function library() {
-  return [radio, ...walkMusic(MUSIC_DIR)].sort((a, b) => a.kind === b.kind ? a.title.localeCompare(b.title) : a.kind === 'radio' ? -1 : 1);
+  const localFiles = [
+    ...walkMusic(REPO_MUSIC_DIR, 'Project music'),
+    ...walkMusic(USER_MUSIC_DIR, 'User music')
+  ];
+  return [...seed.sources, ...localFiles].sort((a, b) => a.kind === b.kind ? a.title.localeCompare(b.title) : a.kind === 'radio' ? -1 : 1);
 }
 
 function stopPlayback() {

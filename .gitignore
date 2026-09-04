@@ -1,5 +1,7 @@
 node_modules/
 dist/
 data/config.json
+music/*
+!music/README.md
 *.log
 .DS_Store

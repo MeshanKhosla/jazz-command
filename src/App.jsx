@@ -110,7 +110,7 @@ function MusicLibrary({ tracks, currentId, onPlay }) {
           </button>
         ))}
       </div>
-      <p className="music-hint">Drop audio files into <code>~/Music</code>. They appear here without a restart.</p>
+      <p className="music-hint">Drop audio into <code>music/</code> or <code>~/Music</code>. New files appear without a restart.</p>
     </section>
   );
 }
